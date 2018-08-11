@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package db;
+import db.controllers.LogMessages;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 public class DBConnection {
     
     private Connection con;
+    private LogMessages LogSms;
     
     public DBConnection () {
         try {
@@ -24,14 +26,20 @@ public class DBConnection {
             String user = "root";
             String pswd = "";
             
-            //Cambiar por datos del servidor donde se hospedará la BD
+            /*
+            String server = "";
+            String user = ""
+            String pswd = "";            
+            */
             
+            //Cambiar por datos del servidor donde se hospedará la BD            
             con = DriverManager.getConnection(server, user, pswd);
             
         } catch (ClassNotFoundException ex) {
             System.out.println(ex);
         } catch (SQLException ex) {
-            System.out.println(ex);
+            LogSms.write_DBException("Error al intentar conectar con el"
+                    + " servidor de BD");
         } 
     }
     

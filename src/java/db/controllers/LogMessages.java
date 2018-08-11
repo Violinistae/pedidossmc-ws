@@ -1,0 +1,18 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package db.controllers;
+
+/**
+ *
+ * @author Emiliano
+ */
+public class LogMessages {
+    public LogMessages() {}
+        
+    public void write_DBException (String str) {
+        System.out.println("-- DB Exception:" + str + " --");
+    }
+}
