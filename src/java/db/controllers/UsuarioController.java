@@ -26,60 +26,7 @@ public class UsuarioController {
         this.con = con;
     }
     
-    public ArrayList<UsuarioModel> readAllUsuario () {
-        PreparedStatement sqlStmt;
-        
-        ArrayList<UsuarioModel> usuarios = new ArrayList();
-        UsuarioModel usuario;
-        ResultSet rs;
-        
-        try {
-            sqlStmt = con.prepareStatement("Select * from usuario order by IdUsuario");
-            rs = sqlStmt.executeQuery();
-            
-            while(rs.next()) {
-                usuario = new UsuarioModel();
-                usuario.setIdUsuario(rs.getInt("IdUsuario"));
-                usuario.setUsername(rs.getString("Username"));
-                usuario.setPassword(rs.getString("Password"));
-                usuario.setNombres(rs.getString("Nombres"));
-                usuario.setApellidos(rs.getString("Apellidos"));
-                usuario.setHash(rs.getString("Hash"));
-                usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
-                usuarios.add(usuario);
-            }
-            
-        } catch (Exception e) {
-            LogSms.write_DBException("Error al consultar 'Usuario'");
-        }
-                       
-        return usuarios;
-    }
-    
-    public UsuarioModel readUsuarioById (int IdU) {
-        PreparedStatement sqlStmnt;
-        UsuarioModel usuario = new UsuarioModel();
-        ResultSet rs;
-        
-        try {
-            sqlStmnt = con.prepareStatement("Select * from usuario where IdUsuario = ?");
-            sqlStmnt.setInt(1, IdU);
-            rs = sqlStmnt.executeQuery();
-            rs.next();
-            usuario.setIdUsuario(rs.getInt("IdUsuario"));
-            usuario.setUsername(rs.getString("Username"));
-            usuario.setPassword(rs.getString("Password"));
-            usuario.setNombres(rs.getString("Nombres"));
-            usuario.setApellidos(rs.getString("Apellidos"));
-            usuario.setHash(rs.getString("Hash"));
-            usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
-            
-        } catch (SQLException ex){
-            LogSms.write_DBException("Error al consultar 'usuario' mediante Id");
-        }
-        return usuario;
-    }
-    
+    // ----------------------- Private Methods -------------------------
     private boolean checkExistUsername (String Username) {
         PreparedStatement sqlStmt;
         ResultSet rs;
@@ -102,6 +49,62 @@ public class UsuarioController {
         return flag;
     }
     
+    
+    // --------------------- Public Methods For WS ---------------------
+    public ArrayList<UsuarioModel> readAllUsuario () {
+        PreparedStatement sqlStmt;
+        
+        ArrayList<UsuarioModel> usuarios = new ArrayList();
+        UsuarioModel usuario;
+        ResultSet rs;
+        
+        try {
+            sqlStmt = this.con.prepareStatement("Select * from usuario order by IdUsuario");
+            rs = sqlStmt.executeQuery();
+            
+            while(rs.next()) {
+                usuario = new UsuarioModel();
+                usuario.setIdUsuario(rs.getInt("IdUsuario"));
+                usuario.setUsername(rs.getString("Username"));
+                usuario.setPassword(rs.getString("Password"));
+                usuario.setNombres(rs.getString("Nombres"));
+                usuario.setApellidos(rs.getString("Apellidos"));
+                usuario.setHash(rs.getString("Hash"));
+                usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
+                usuarios.add(usuario);
+            }
+            
+        } catch (SQLException e) {
+            LogSms.write_DBException("Error al consultar 'Usuario'");
+        }
+                       
+        return usuarios;
+    }
+    
+    public UsuarioModel readUsuarioById (int IdU) {
+        PreparedStatement sqlStmnt;
+        UsuarioModel usuario = new UsuarioModel();
+        ResultSet rs;
+        
+        try {
+            sqlStmnt = this.con.prepareStatement("Select * from usuario where IdUsuario = ?");
+            sqlStmnt.setInt(1, IdU);
+            rs = sqlStmnt.executeQuery();
+            rs.next();
+            usuario.setIdUsuario(rs.getInt("IdUsuario"));
+            usuario.setUsername(rs.getString("Username"));
+            usuario.setPassword(rs.getString("Password"));
+            usuario.setNombres(rs.getString("Nombres"));
+            usuario.setApellidos(rs.getString("Apellidos"));
+            usuario.setHash(rs.getString("Hash"));
+            usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
+            
+        } catch (SQLException ex){
+            LogSms.write_DBException("Error al consultar 'usuario' mediante Id");
+        }
+        return usuario;
+    }    
+    
     public int createUsuario (String Username, String Password, String Nombres, 
             String Apellidos, String Hash, int TipoUsuario) {               
         
@@ -114,7 +117,7 @@ public class UsuarioController {
             //Hash= Generate hash
             //Password = Generate password
             
-            sqlStmt = con.prepareStatement(
+            sqlStmt = this.con.prepareStatement(
                     "Insert into usuario (IdUsuario, Username, Password,"
                             + "Nombres, Apellidos, Hash, TipoUsuario) values "
                             + "(?, ?, ?, ?, ?, ?)");
@@ -128,7 +131,7 @@ public class UsuarioController {
             
             return 1;           //Exito al crear un nuevo usuario
                         
-        } catch (Exception e) {     //No se pudo crear el nuevo usuario
+        } catch (SQLException e) {     //No se pudo crear el nuevo usuario
             LogSms.write_DBException("Error al crear 'usuario'");
             return 0;
         }
@@ -145,7 +148,7 @@ public class UsuarioController {
         ResultSet rs;
         
         try {
-            sqlStmt = con.prepareStatement("Select Password, TipoUsuario"
+            sqlStmt = this.con.prepareStatement("Select Password, TipoUsuario"
                     + "from usuario where Username = ?");
             sqlStmt.setString(1, Username);
             rs = sqlStmt.executeQuery();
@@ -162,7 +165,7 @@ public class UsuarioController {
                     return 0;
                 }                                
             }            
-        } catch (Exception e) {
+        } catch (SQLException e) {
             LogSms.write_DBException("Error al consultar 'usuario' para Login");
             return 0;
         }
