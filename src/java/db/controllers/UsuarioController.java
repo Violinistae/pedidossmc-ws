@@ -27,10 +27,17 @@ public class UsuarioController {
     }
     
     // ----------------------- Private Methods -------------------------
-    private boolean checkExistUsername (String Username) {
+    
+    /**
+     * Método que realiza una consulta a BD para verificar la existencia de
+     * un nombre de usuario (Username)
+     * @param Username  Username a verificar existencia
+     * @return Estado de existencia del username
+     */
+    private int checkExistUsername (String Username) {
         PreparedStatement sqlStmt;
         ResultSet rs;
-        boolean flag =  false;
+        int IdU =  -1;
         
         try {
             sqlStmt = con.prepareStatement("Select * from usuario where Username = ?");
@@ -38,19 +45,26 @@ public class UsuarioController {
             rs = sqlStmt.executeQuery();
             
             if (rs.next()) {            //Existe ese usuario
-                flag = true;
+                
+                IdU = rs.getInt("IdUsuario");
             } else {                    //No existe ese usuario
-                flag = false;
+                IdU = -1;
             }
                         
         } catch (SQLException ex){
             LogSms.write_DBException("Error al consultar 'usuario' mediante Username");
         }
-        return flag;
-    }
-    
-    
+        return IdU;
+    }        
+      
     // --------------------- Public Methods For WS ---------------------
+    
+    /**
+     * Método que realiza una consulta a BD para obtener todos los usuarios
+     * del sistema.
+     * @return  ArrayList de tipo UsuarioModel con todos los usuarios 
+     *          existentes en el sistema
+     */
     public ArrayList<UsuarioModel> readAllUsuario () {
         PreparedStatement sqlStmt;
         
@@ -81,7 +95,15 @@ public class UsuarioController {
         return usuarios;
     }
     
+    /**
+     * Método que realiza una consulta a BD para obtener la información de
+     * determinado usuario.
+     * @param IdU   Id de Usuario con el que se realizará la consulta a BD
+     * @return      Objeto de tipo UsuarioModel con la información del usuario
+     *              consultado
+     */
     public UsuarioModel readUsuarioById (int IdU) {
+        
         PreparedStatement sqlStmnt;
         UsuarioModel usuario = new UsuarioModel();
         ResultSet rs;
@@ -90,25 +112,80 @@ public class UsuarioController {
             sqlStmnt = this.con.prepareStatement("Select * from usuario where IdUsuario = ?");
             sqlStmnt.setInt(1, IdU);
             rs = sqlStmnt.executeQuery();
-            rs.next();
-            usuario.setIdUsuario(rs.getInt("IdUsuario"));
-            usuario.setUsername(rs.getString("Username"));
-            usuario.setPassword(rs.getString("Password"));
-            usuario.setNombres(rs.getString("Nombres"));
-            usuario.setApellidos(rs.getString("Apellidos"));
-            usuario.setHash(rs.getString("Hash"));
-            usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
             
+            if (rs.next()) {
+                usuario.setIdUsuario(rs.getInt("IdUsuario"));
+                usuario.setUsername(rs.getString("Username"));
+                usuario.setPassword(rs.getString("Password")); // Retornar campo ?
+                usuario.setNombres(rs.getString("Nombres"));
+                usuario.setApellidos(rs.getString("Apellidos"));
+                usuario.setHash(rs.getString("Hash"));
+                usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
+            } else {
+                usuario.setIdUsuario(-1);
+            }            
+                        
         } catch (SQLException ex){
             LogSms.write_DBException("Error al consultar 'usuario' mediante Id");
+            usuario.setIdUsuario(-2);
         }
         return usuario;
     }    
     
+    //Read usuario by Nombres ?
+    
+    /**
+     * Método que realiza una consulta a BD para obtener la información de
+     * determinado usuario.
+     * @param Username  Username con el que se realizará la consulta a BD
+     * @return  
+     */
+    public UsuarioModel readUsuarioByUsername (String Username) {
+        
+        PreparedStatement sqlStmnt;
+        UsuarioModel usuario = new UsuarioModel();
+        ResultSet rs;
+        
+        try {
+            sqlStmnt = this.con.prepareStatement("Select * from usuario where Username = ?");
+            sqlStmnt.setString(1, Username);
+            rs = sqlStmnt.executeQuery();
+                        
+            if (rs.next()) {
+                usuario.setIdUsuario(rs.getInt("IdUsuario"));
+                usuario.setUsername(rs.getString("Username"));
+                usuario.setPassword(rs.getString("Password"));  // Retornar campo ?
+                usuario.setNombres(rs.getString("Nombres"));
+                usuario.setApellidos(rs.getString("Apellidos"));
+                usuario.setHash(rs.getString("Hash"));
+                usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
+            } else {
+                usuario.setIdUsuario(-1);
+            }            
+            
+        } catch (SQLException ex){
+            LogSms.write_DBException("Error al consultar 'usuario' mediante Id");
+            usuario.setIdUsuario(-2);
+        }
+        return usuario;
+    }    
+    
+    /**
+     * Método para crear usuarios
+     * @param Username
+     * @param Password
+     * @param Nombres
+     * @param Apellidos
+     * @param Hash
+     * @param TipoUsuario
+     * @return 
+     */
     public int createUsuario (String Username, String Password, String Nombres, 
             String Apellidos, String Hash, int TipoUsuario) {               
         
-        if (this.checkExistUsername(Username)) {  // Ya existe ese usuario
+        int IdU = this.checkExistUsername(Username);
+        
+        if (IdU > 0) {  // Ya existe ese usuario
             return -1;
         }
         
@@ -138,38 +215,148 @@ public class UsuarioController {
         
     }    
     
-    public int verifyLogin (String Username, String Password) {        
+    /**
+     * Método para verifcar información de login en BD
+     * @param Username  Nombre de usuario a verificar en BD
+     * @param Password  Contraseña de Usuario a verificar en la BD
+     * @return 
+     */
+    public int verifyLogin (String Username, String Password) {                       
         
-        if (this.checkExistUsername(Username)) {  // Ya existe ese usuario
-            return 0;
+        int IdU = this.checkExistUsername(Username);
+        
+        if (IdU < 1) {  // No existe ese usuario
+            return -1;
         }
         
         PreparedStatement sqlStmt;
-        ResultSet rs;
-        
+        ResultSet rs;        
         try {
-            sqlStmt = this.con.prepareStatement("Select Password, TipoUsuario"
-                    + "from usuario where Username = ?");
-            sqlStmt.setString(1, Username);
+            sqlStmt = this.con.prepareStatement("Select Username, Password, TipoUsuario"
+                    + "from usuario where IdUsuario = ?");
+            sqlStmt.setInt(1, IdU);
             rs = sqlStmt.executeQuery();
             
             if (!rs.next()) {            //No existe ese usuario
                 return 0;
-            } else {                    //Existe ese usuario               
+            } else {                    //Existe ese usuario
                 
                 //Password = Create hash to compare
-                if (Password.equals(rs.getString("Password"))) { //Login Exitoso                    
+                if (Username.equals(rs.getString("Username")) && 
+                        Password.equals(rs.getString("Password"))) {
+                    //Login Exitoso
+                    
                     //Switch for interface on WS Method and limit on Android
                     return rs.getInt("TipoUsuario");
+
                 } else {
                     return 0;
-                }                                
+                }
+                                                            
             }            
         } catch (SQLException e) {
             LogSms.write_DBException("Error al consultar 'usuario' para Login");
             return 0;
         }
         
+    }
+    
+    /**
+     * 
+     * @param OldUsername
+     * @param Username
+     * @param Nombres
+     * @param Apellidos
+     * @return 
+     */
+    public int updateUsuarioInfo (String OldUsername, String Username, String Nombres, 
+            String Apellidos) {               
+        
+        if (!OldUsername.equals(Username)) {
+            int IdU = this.checkExistUsername(Username);
+        
+            if (IdU > 0) {  // Ya existe ese usuario
+                return -1;
+            }
+        }
+                       
+        PreparedStatement sqlStmt;
+        try {                       
+            
+            sqlStmt = this.con.prepareStatement(
+                    "Update usuario Set "
+                            + "Username = ?, "
+                            + "Nombres = ?,"
+                            + "Apellidos = ? where Username = ?"
+            );
+            sqlStmt.setString(1, Username);
+            sqlStmt.setString(2, Nombres);
+            sqlStmt.setString(3, Apellidos);
+            sqlStmt.setString(4, OldUsername);
+            
+            if (sqlStmt.executeUpdate() > 0) 
+                return 1;           //Exito al actualizar info de usuario
+            return -2;      //No se encontró al usuario a actualizar
+                        
+        } catch (SQLException e) {     //No se pudo actualizar info de usuario
+            LogSms.write_DBException("Error al actualizar info 'usuario'");
+            return 0;
+        }
+    }
+    
+    public int changeUserPassword (String Username, String OldPswd, 
+            String NewPswd) {
+        
+        int IdU = this.checkExistUsername(Username);
+        
+        if (IdU < 1) {  // No existe ese usuario
+            return -1;
+        }
+        
+        PreparedStatement sqlStmt;
+        try {
+            
+            //OldPswd = Hash for check old password
+            //NewPswd = Hash for update new password
+            
+            sqlStmt = this.con.prepareStatement(
+                    "Update usuario Set "
+                            + "Password = ?"
+                            + "where Username = ? and Password = ?"
+            );
+            sqlStmt.setString(1, NewPswd);
+            sqlStmt.setString(2, Username);
+            sqlStmt.setString(3, OldPswd);            
+            if (sqlStmt.executeUpdate() > 0) 
+                return 1;    //Actualización de contraseña correcta                        
+            return -2;      //Información para cambiar contraseña es incorrecta
+            
+        } catch (SQLException e) {  
+            LogSms.write_DBException("Error al actualizar password 'usuario'");
+            return 0;
+        }
+        
+    }
+    
+    /**
+     * 
+     * @param IdU
+     * @return 
+     */
+    public int deleteUsuarioById (int IdU) {
+        PreparedStatement sqlStmt;
+        
+        try {
+            sqlStmt = this.con.prepareStatement("Delete * from usuario where IdUsuario= ?");
+            sqlStmt.setInt(1, IdU);
+            if (sqlStmt.executeUpdate() > 0)
+                return 1;
+            return -1;              //No se pudo encontrar al usuario a eliminar
+
+        } catch (SQLException ex){
+            LogSms.write_DBException("Error al consultar 'usuario' mediante Id");
+            return 0;
+        }        
     }
     
 }
