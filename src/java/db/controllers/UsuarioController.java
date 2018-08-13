@@ -201,7 +201,7 @@ public class UsuarioController {
             }
             
         } catch (SQLException e) {
-            LogSms.write_DBException("Error al consultar 'Usuario'");
+            LogSms.write_DBException("Error al consultar 'Usuario' like Username");
         }
                        
         return usuarios;

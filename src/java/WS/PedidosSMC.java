@@ -115,10 +115,31 @@ public class PedidosSMC {
         return clientCtrlr.createCliente(CodCliente, Nombres, Apellidos);
     }
     
+    @WebMethod(operationName = "readAllClient")
+    public ArrayList<ClientesModel> readAllClient () {
+        return clientCtrlr.readAllClientes();
+    }
     
+    @WebMethod(operationName = "readClient")
+    public ClientesModel readClientByCodCli (@WebParam(name="CodCliente")String CodCliente) {
+        return clientCtrlr.readClienteByCodCliente(CodCliente);
+    }
     
+    @WebMethod(operationName = "updateClientInfo")
+    public int updateClientInfo (@WebParam(name = "IdCliente")int IdCliente,
+            @WebParam(name = "CodCliente")String CodCliente,
+            @WebParam(name = "Nombres")String Nombres,
+            @WebParam(name = "Apellidos")String Apellidos) {
+        return clientCtrlr.updateClienteInfo(IdCliente, 
+                CodCliente, Nombres, Apellidos);
+    }
     
+    @WebMethod(operationName = "updateClient")
+    public int deleteClient (@WebParam (name = "IdCliente")int IdCl) {
+        return clientCtrlr.deleteClienteById(IdCl);
+    }
     
+    // ---------------- Web Methods only For 'cliente' --------------------
     
     
             

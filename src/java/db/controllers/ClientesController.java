@@ -31,6 +31,11 @@ public class ClientesController {
     
     // --------------------- Public Methods For WS ---------------------
     
+    /**
+     * Método para obtener la lista de todos los clientes existentes en el
+     * sistema.
+     * @return  Lista de Clientes en el sistema
+     */
     public ArrayList<ClientesModel> readAllClientes () {
         PreparedStatement sqlStmt;
         
@@ -60,6 +65,11 @@ public class ClientesController {
         return clientes;
     }
     
+    /**
+     * Método para consultar la información de un cliente en base a CodCliente
+     * @param CodCliente    Código de cliente con el que se realizará la consulta
+     * @return    ClientesModel con información del cliente
+     */
     public ClientesModel readClienteByCodCliente (String CodCliente) {
         PreparedStatement sqlStmnt;
         ClientesModel cliente = new ClientesModel();
@@ -83,6 +93,47 @@ public class ClientesController {
         return cliente;
     }
     
+    /**
+     * Método para buscar clientes en base a un CodCliente ingresado o semiingresado
+     * @param CodCliente    CodCliente con el que se compararán los resultados en la BD
+     * @return 
+     */
+    public ArrayList<ClientesModel> readClienteLikeCodCliente (String CodCliente) {
+        PreparedStatement sqlStmt;
+        
+        ArrayList<ClientesModel> clientes = new ArrayList();
+        ClientesModel cliente;
+        ResultSet rs;
+        
+        try {
+            sqlStmt = this.con.prepareStatement("Select * from clientes "
+                    + "where CodCliente LIKE '?%' order by CodCliente");
+            sqlStmt.setString(1, CodCliente);
+            rs = sqlStmt.executeQuery();
+            
+            while(rs.next()) {
+                cliente = new ClientesModel();
+                cliente.setIdCliente(rs.getInt("IdCliente"));
+                cliente.setCodCliente(rs.getString("CodCliente"));
+                cliente.setNombres(rs.getString("Nombres"));
+                cliente.setApellidos(rs.getString("Apellidos"));
+                clientes.add(cliente);
+            }
+            
+        } catch (SQLException e) {
+            LogSms.write_DBException("Error al consultar 'clientes' like CodCliente");
+        }
+                       
+        return clientes;
+    }
+    
+    /**
+     * Método para crear clientes en la BD
+     * @param CodCliente    Código de nuevo Cliente
+     * @param Nombres       Nombres del cliente
+     * @param Apellidos     Apellidos del cliente
+     * @return          Bandera de éxito al crear cliente
+     */
     public int createCliente (String CodCliente, String Nombres,
             String Apellidos) {
         
@@ -109,12 +160,22 @@ public class ClientesController {
         
     }
     
-    public int updateClienteInfo (int IdCliente,  String CodCliente, 
+    /**
+     * Método para actualizar información de cliente
+     * @param IdCliente     Id de Cliente a actualizar
+     * @param CodCliente    Nuevo Código de Cliente
+     * @param Nombres       Nombres
+     * @param Apellidos     Apellidos
+     * @return 
+     */
+    public int updateClienteInfo (int IdCliente, String CodCliente, 
             String Nombres, String Apellidos) {        
         //Verificar en App si se modificaron los campos
         
         ClientesModel verfCliente = this.readClienteByCodCliente(CodCliente);
-        if (verfCliente.getCodCliente().equals(CodCliente)) {
+        if (verfCliente.getCodCliente().equals(CodCliente)
+                && verfCliente.getIdCliente() != IdCliente) {            
+            //Verificar id de cliente
             return -1;          //Ya existe un cliente con ese Código
         }
         
@@ -143,6 +204,11 @@ public class ClientesController {
         
     }
     
+    /**
+     * Método para eliminar cliente cuando se confirme la acción
+     * @param IdCl      Id de cliente enviado para confirmar la accion
+     * @return 
+     */
     public int deleteClienteById (int IdCl) {
         PreparedStatement sqlStmt;
         
