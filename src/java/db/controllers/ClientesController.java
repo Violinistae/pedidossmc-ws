@@ -109,4 +109,55 @@ public class ClientesController {
         
     }
     
+    public int updateClienteInfo (int IdCliente,  String CodCliente, 
+            String Nombres, String Apellidos) {        
+        //Verificar en App si se modificaron los campos
+        
+        ClientesModel verfCliente = this.readClienteByCodCliente(CodCliente);
+        if (verfCliente.getCodCliente().equals(CodCliente)) {
+            return -1;          //Ya existe un cliente con ese Código
+        }
+        
+        PreparedStatement sqlStmt;
+        try {                       
+            
+            sqlStmt = this.con.prepareStatement(
+                    "Update clientes Set "
+                            + "CodCliente = ?, "
+                            + "Nombres = ?,"
+                            + "Apellidos = ? where IdCliente = ?"
+            );
+            sqlStmt.setString(1, CodCliente);
+            sqlStmt.setString(2, Nombres);
+            sqlStmt.setString(3, Apellidos);
+            sqlStmt.setInt(4, IdCliente);
+            
+            if (sqlStmt.executeUpdate() > 0)
+                return 1;           //Exito al actualizar info de cliente
+            return -2;      //No se encontró al cliente a actualizar
+                        
+        } catch (SQLException e) {     //No se pudo actualizar info de cliente
+            LogSms.write_DBException("Error al actualizar info 'usuario'");
+            return 0;
+        }
+        
+    }
+    
+    public int deleteClienteById (int IdCl) {
+        PreparedStatement sqlStmt;
+        
+        try {
+            sqlStmt = this.con.prepareStatement("Delete * from clientes "
+                    + "where IdClientes = ?");
+            sqlStmt.setInt(1, IdCl);
+            if (sqlStmt.executeUpdate() > 0) {
+                return 1;
+            }
+            return -1;
+        } catch (SQLException ex) {
+            LogSms.write_DBException("Error al eliminar 'cliente' mediante Id");
+            return 0;
+        }
+    }
+    
 }

@@ -134,7 +134,7 @@ public class UsuarioController {
     
     //Read usuario by Nombres ?
     
-    /**
+    /** 
      * Método que realiza una consulta a BD para obtener la información de
      * determinado usuario.
      * @param Username  Username con el que se realizará la consulta a BD
@@ -169,6 +169,43 @@ public class UsuarioController {
         }
         return usuario;
     }    
+    
+    /**
+     * Método para buscar usuarios en base a un Username ingresado o semiingresado
+     * @param Username  Username con el que se compararán los resultados en la BD
+     * @return 
+     */
+    public ArrayList<UsuarioModel> readUsuarioLikeUsername (String Username) {
+        PreparedStatement sqlStmt;
+        
+        ArrayList<UsuarioModel> usuarios = new ArrayList();
+        UsuarioModel usuario;
+        ResultSet rs;
+        
+        try {
+            sqlStmt = this.con.prepareStatement("Select * from usuario "
+                    + "where Username LIKE '?%' order by IdUsuario");
+            sqlStmt.setString(1, Username);
+            rs = sqlStmt.executeQuery();
+            
+            while(rs.next()) {
+                usuario = new UsuarioModel();
+                usuario.setIdUsuario(rs.getInt("IdUsuario"));
+                usuario.setUsername(rs.getString("Username"));
+                usuario.setPassword(rs.getString("Password"));
+                usuario.setNombres(rs.getString("Nombres"));
+                usuario.setApellidos(rs.getString("Apellidos"));
+                usuario.setHash(rs.getString("Hash"));
+                usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
+                usuarios.add(usuario);
+            }
+            
+        } catch (SQLException e) {
+            LogSms.write_DBException("Error al consultar 'Usuario'");
+        }
+                       
+        return usuarios;
+    }       
     
     /**
      * Método para crear usuarios
@@ -262,11 +299,11 @@ public class UsuarioController {
     }
     
     /**
-     * 
-     * @param OldUsername
-     * @param Username
-     * @param Nombres
-     * @param Apellidos
+     * Método para actualizar información de usuario
+     * @param OldUsername       Nombre de usuario anterior (Tomado de Variable de "Sesión")
+     * @param Username          Nuevo nombre de usuario
+     * @param Nombres           Nombres
+     * @param Apellidos         Apellidos
      * @return 
      */
     public int updateUsuarioInfo (String OldUsername, String Username, String Nombres, 
@@ -304,6 +341,13 @@ public class UsuarioController {
         }
     }
     
+    /**
+     * Método para cambiar contraseña de usuario
+     * @param Username      Nombre de usuario
+     * @param OldPswd       Contraseña anterior
+     * @param NewPswd       Nueva contraseña
+     * @return 
+     */
     public int changeUserPassword (String Username, String OldPswd, 
             String NewPswd) {
         
@@ -339,8 +383,8 @@ public class UsuarioController {
     }
     
     /**
-     * 
-     * @param IdU
+     * Método para eliminar usuario cuando se confirme la acción
+     * @param IdU       Registro de usuario enviado para confirmar la accion
      * @return 
      */
     public int deleteUsuarioById (int IdU) {
@@ -354,7 +398,7 @@ public class UsuarioController {
             return -1;              //No se pudo encontrar al usuario a eliminar
 
         } catch (SQLException ex){
-            LogSms.write_DBException("Error al consultar 'usuario' mediante Id");
+            LogSms.write_DBException("Error al eliminar 'usuario' mediante Id");
             return 0;
         }        
     }
