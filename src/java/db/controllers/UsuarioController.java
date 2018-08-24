@@ -391,7 +391,7 @@ public class UsuarioController {
         PreparedStatement sqlStmt;
         
         try {
-            sqlStmt = this.con.prepareStatement("Delete * from usuario where IdUsuario= ?");
+            sqlStmt = this.con.prepareStatement("Delete from usuario where IdUsuario= ?");
             sqlStmt.setInt(1, IdU);
             if (sqlStmt.executeUpdate() > 0)
                 return 1;

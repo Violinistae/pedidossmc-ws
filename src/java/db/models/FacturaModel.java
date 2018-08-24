@@ -13,6 +13,7 @@ public class FacturaModel {
     private int IdFactura;
     private String Fecha;
     private int Vendedor;
+    private int Cliente;
     private int Total;
 
     public int getIdFactura() {
@@ -37,6 +38,14 @@ public class FacturaModel {
 
     public void setVendedor(int Vendedor) {
         this.Vendedor = Vendedor;
+    }
+    
+    public int getCliente() {
+        return Cliente;
+    }
+    
+    public void setCliente(int Cliente) {
+        this.Cliente = Cliente;
     }
 
     public int getTotal() {

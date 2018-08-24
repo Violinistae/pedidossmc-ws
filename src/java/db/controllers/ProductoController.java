@@ -150,12 +150,20 @@ public class ProductoController {
             return 1;       //Éxito al crear nuevo producto
                         
         } catch (SQLException e) {     //No se pudo actualizar info de cliente
-            LogSms.write_DBException("Error al actualizar info 'usuario'");
+            LogSms.write_DBException("Error al actualizar info 'producto'");
             return 0;
         }
         
     }
     
+    /**
+     * 
+     * @param IdProd
+     * @param CodProd
+     * @param Descripcion
+     * @param PesoSaco
+     * @return 
+     */
     public int updateProducto (int IdProd, String CodProd, String Descripcion,
             int PesoSaco) {
         
@@ -164,7 +172,51 @@ public class ProductoController {
                 prodVerf.getIdProd() != IdProd) {
             return -1;
         }
+                
+        PreparedStatement sqlStmt;
+        try {
+            sqlStmt = this.con.prepareStatement(
+                    "Update producto Set"
+                            + "CodProd = ?,"
+                            + "Descripcion = ?,"
+                            + "PesoSaco = ? where IdProd = ?"
+            );
+            sqlStmt.setString(1, CodProd);
+            sqlStmt.setString(2, Descripcion);
+            sqlStmt.setInt(3, PesoSaco);
+            sqlStmt.setInt(4, IdProd);
+            
+            if (sqlStmt.executeUpdate() > 0)
+                return 1;       //Éxito
+            return -2;          //No se pudo actualizar (no se encontró IdProd)
+            
+        } catch (Exception e) {     //Error al actualizar
+            LogSms.write_DBException("Error al actualizar info 'producto'");
+            return 0;
+        }
         
+    }
+    
+    /**
+     * 
+     * @param IdProd
+     * @return 
+     */
+    public int deleteProductoById (int IdProd) {
+        PreparedStatement sqlStmt;
+        
+        try {
+            sqlStmt = this.con.prepareStatement("Delete from Producto"
+                    + "where IdProd = ?");
+            sqlStmt.setInt(1, IdProd);
+            if (sqlStmt.executeUpdate() > 0) {
+                return 1;
+            }
+            return -1;
+        } catch (Exception e) {
+            LogSms.write_DBException("Error al eliminar 'cliente' mediante Id");
+            return 0;
+        }
     }
     
 }

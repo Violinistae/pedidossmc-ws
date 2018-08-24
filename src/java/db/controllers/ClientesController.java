@@ -198,7 +198,7 @@ public class ClientesController {
             return -2;      //No se encontró al cliente a actualizar
                         
         } catch (SQLException e) {     //No se pudo actualizar info de cliente
-            LogSms.write_DBException("Error al actualizar info 'usuario'");
+            LogSms.write_DBException("Error al actualizar info 'cliente'");
             return 0;
         }
         
@@ -213,7 +213,7 @@ public class ClientesController {
         PreparedStatement sqlStmt;
         
         try {
-            sqlStmt = this.con.prepareStatement("Delete * from clientes "
+            sqlStmt = this.con.prepareStatement("Delete from clientes "
                     + "where IdClientes = ?");
             sqlStmt.setInt(1, IdCl);
             if (sqlStmt.executeUpdate() > 0) {

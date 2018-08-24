@@ -28,6 +28,9 @@ public class PedidosSMC {
     // ------------- Controllers -------------
     private final UsuarioController userCtrlr = new UsuarioController(intermediate.getCon());
     private final ClientesController clientCtrlr = new ClientesController(intermediate.getCon());
+    private final ProductoController prodCtrlr = new ProductoController(intermediate.getCon());
+    private final FacturaController factCtrlr = new FacturaController(intermediate.getCon());
+    
        
     // - Web Methods only For 'usuario' Creation, Login, Update & Delete Actions -
     
@@ -120,9 +123,16 @@ public class PedidosSMC {
         return clientCtrlr.readAllClientes();
     }
     
-    @WebMethod(operationName = "readClient")
-    public ClientesModel readClientByCodCli (@WebParam(name="CodCliente")String CodCliente) {
+    @WebMethod(operationName = "readClientByCodCli")
+    public ClientesModel readClientByCodCli (
+            @WebParam(name="CodCliente")String CodCliente) {
         return clientCtrlr.readClienteByCodCliente(CodCliente);
+    }
+    
+    @WebMethod(operationName = "readClientLikeCodCli")
+    public ArrayList<ClientesModel> readClientLikeCodCli (
+            @WebParam(name="CodCliente")String CodCliente) {
+        return clientCtrlr.readClienteLikeCodCliente(CodCliente);
     }
     
     @WebMethod(operationName = "updateClientInfo")
@@ -139,14 +149,83 @@ public class PedidosSMC {
         return clientCtrlr.deleteClienteById(IdCl);
     }
     
-    // ---------------- Web Methods only For 'cliente' --------------------
+    // ---------------- Web Methods only For 'producto' --------------------
+    
+    @WebMethod(operationName = "createProduct")
+    public int createProduct (@WebParam(name = "CodProd")String CodProd,            
+            @WebParam(name = "Descripcion")String Descripcion,
+            @WebParam(name = "PesoSaco")int PesoSaco) {
+        return prodCtrlr.createProducto(CodProd, Descripcion, PesoSaco);
+    }
+       
+    @WebMethod(operationName = "readAllProduct")
+    public ArrayList<ProductoModel> readAllProduct(){
+        return prodCtrlr.readAllProducto();
+    }
+    
+    @WebMethod(operationName = "readProductByCodProd")
+    public ProductoModel readProductByCodProd(
+            @WebParam(name = "CodProd")String CodProd){
+        return prodCtrlr.readProductoByCodProd(CodProd);
+    }
+    
+    @WebMethod(operationName = "readProductLikeCodProd")
+    public ArrayList<ProductoModel> readProductLikeCodProd(
+            @WebParam(name = "CodProd")String CodProd){
+        return prodCtrlr.readProductoLikeCodProd(CodProd);
+    }
+    
+    @WebMethod(operationName = "updateProductInfo")
+    public int updateProductInfo (@WebParam(name = "IdProd")int IdProd,
+            @WebParam(name = "CodProd")String CodProd,
+            @WebParam(name = "Descripcion")String Descripcion,
+            @WebParam(name = "PesoSaco")int PesoSaco) {
+        return prodCtrlr.updateProducto(IdProd, CodProd, Descripcion, PesoSaco);
+    }
+    
+    @WebMethod(operationName = "deleteProduct")
+    public int deleteProduct (@WebParam(name = "IdProd")int IdProd){
+        return prodCtrlr.deleteProductoById(IdProd);
+    }
+    
+    // ---------------- Web Methods only For 'factura' --------------------
+        
+    @WebMethod(operationName = "createFactura")
+    public int createFactura (@WebParam(name = "Fecha")String Fecha,
+            @WebParam(name = "IdVend")int IdVend,
+            @WebParam(name = "IdCli")int IdCli,
+            @WebParam(name = "Total")int Total) {
+        return factCtrlr.createFactura(Fecha, IdVend, IdVend, Total);
+    }
+    
+    @WebMethod(operationName = "readAllFacturas")
+    public ArrayList<FacturaModel> readAllFacturas () {
+        return factCtrlr.readAllFacturas();
+    }
+    
+    @WebMethod(operationName = "readFacturaByVendedor") 
+    public ArrayList<FacturaModel> readFacturaByVendedor(
+            @WebParam(name = "IdVend")int IdVend) {
+        return factCtrlr.readFacturasByVendedor(IdVend);
+    }
+    
+    @WebMethod(operationName = "readFacturaByFecha")
+    public ArrayList<FacturaModel> readFacturaByFecha(
+            @WebParam(name = "Fecha")String Fecha) {
+        return factCtrlr.readFacturasByFecha(Fecha);
+    }
     
     
+    
+    
+    
+    //Método que lea facturas que existan y no se hayan completado
+    // All facturas - Facturas concluidas (Tomando en cuenta el IdFactura)
             
     //*******************************************************************
             
     /**
-     * This is a sample web service operation
+     * Prueba perrona del WS
      */
     @WebMethod(operationName = "helloworld")
     public String hello() {
