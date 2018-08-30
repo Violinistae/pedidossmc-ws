@@ -215,6 +215,18 @@ public class PedidosSMC {
         return factCtrlr.readFacturasByFecha(Fecha);
     }
     
+    @WebMethod(operationName = "updateTotalFactura")
+    public int updateTotalFactura (@WebParam(name = "IdFactura")int IdFactura, 
+            @WebParam(name = "NewTotal")int NewTotal) {
+        return factCtrlr.updateTotalFactura(IdFactura, NewTotal);
+    }
+    
+    @WebMethod(operationName = "deleteFactura")
+    public int deleteFactura (@WebParam(name = "IdFactura")int IdFactura) {
+        return factCtrlr.deleteFactura(IdFactura);
+    }
+    
+    // ---------------- Web Methods only For 'Pedido' --------------------
     
     
     

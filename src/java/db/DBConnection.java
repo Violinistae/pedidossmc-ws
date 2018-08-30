@@ -22,17 +22,17 @@ public class DBConnection {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             
-            String server = "jdbc:mysql://localhost:3306/alumnosjax";
+            String server = "jdbc:mysql://localhost:3306/pedidossmc";
             String user = "root";
             String pswd = "";
             
+            //Cambiar por datos del servidor donde se hospedará la BD
             /*
             String server = "";
             String user = ""
             String pswd = "";            
             */
-            
-            //Cambiar por datos del servidor donde se hospedará la BD            
+                                    
             con = DriverManager.getConnection(server, user, pswd);
             
         } catch (ClassNotFoundException ex) {
