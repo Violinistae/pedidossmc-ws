@@ -167,6 +167,8 @@ public class ProductoController {
     public int updateProducto (int IdProd, String CodProd, String Descripcion,
             int PesoSaco) {
         
+        //Verificar que no exista un producto con el mismo CodigoProducto y que
+        //no sea el mismo
         ProductoModel prodVerf = this.readProductoByCodProd(CodProd);
         if (prodVerf.getCodProd().equals(CodProd) &&
                 prodVerf.getIdProd() != IdProd) {

@@ -161,6 +161,8 @@ public class FacturaController {
         }
     }
     
+    //Update info de factura
+    
     /**
      * 
      * @param IdFactura
@@ -200,7 +202,7 @@ public class FacturaController {
             return -1;
             
         } catch (SQLException e) {
-            LogSms.write_DBException("Error al crear 'factura'");
+            LogSms.write_DBException("Error al eliminar 'factura'");
             return 0;
         }
     }
