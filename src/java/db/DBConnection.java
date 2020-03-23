@@ -33,7 +33,7 @@ public class DBConnection {
             String pswd = "";            
             */
                                     
-            con = DriverManager.getConnection(server, user, pswd);
+            this.con = DriverManager.getConnection(server, user, pswd);
             
         } catch (ClassNotFoundException ex) {
             System.out.println(ex);

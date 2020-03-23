@@ -28,6 +28,8 @@ public class PedidosSMC {
     // ------------- Controllers -------------
     private final UsuarioController userCtrlr = new UsuarioController(intermediate.getCon());
     private final ClientesController clientCtrlr = new ClientesController(intermediate.getCon());
+    private final ClientesVendedorController clientVendCtrlr =
+            new ClientesVendedorController(intermediate.getCon());
     private final ProductoController prodCtrlr = new ProductoController(intermediate.getCon());
     private final FacturaController factCtrlr = new FacturaController(intermediate.getCon());
     
@@ -64,7 +66,7 @@ public class PedidosSMC {
     @WebMethod(operationName = "readUserById")
     public UsuarioModel readUserById (@WebParam(name = "IdU")int IdU) {
         return userCtrlr.readUsuarioById(IdU);
-    }    
+    }
     
     @WebMethod(operationName = "searchUserLikeUsername")
     public ArrayList<UsuarioModel> searchUserLikeUsername (
@@ -127,6 +129,9 @@ public class PedidosSMC {
     public ClientesModel readClientByCodCli (
             @WebParam(name="CodCliente")String CodCliente) {
         return clientCtrlr.readClienteByCodCliente(CodCliente);
+        //IdCliente #x -> Id del cliente
+        //          -1 -> No existe algún cliente con ese cod
+        //          -2 -> Error al consultar en la DB
     }
     
     @WebMethod(operationName = "readClientLikeCodCli")
@@ -144,10 +149,32 @@ public class PedidosSMC {
                 CodCliente, Nombres, Apellidos);
     }
     
-    @WebMethod(operationName = "updateClient")
+    @WebMethod(operationName = "deleteClient")
     public int deleteClient (@WebParam (name = "IdCliente")int IdCl) {
         return clientCtrlr.deleteClienteById(IdCl);
     }
+    
+    // Methods for Assoc Cliente to Vendedor (User). Use only for Admin
+    
+    @WebMethod(operationName = "assocClientToVend")
+    public int assocClienteToVend (@WebParam(name = "CodCliente")String CodCliente,
+            @WebParam(name = "IdU")int IdU){
+        
+        UsuarioModel vendedor = new UsuarioModel();
+        vendedor = userCtrlr.readUsuarioById(IdU);
+        if (vendedor.getIdUsuario() > 0) {
+            ClientesModel cliente = new ClientesModel();
+            cliente = clientCtrlr.readClienteByCodCliente(CodCliente);
+            if (cliente.getIdCliente() > 0){
+                //Asociar cliente con vendedor
+                return clientVendCtrlr.assocClientToVend(
+                        vendedor.getIdUsuario(), cliente.getIdCliente());
+            } else  //No existe el cliente al que asociar a un vendedor
+                return -2;            
+        } else //No existe vendedor con el que asociar un cliente
+            return -1;  
+    }
+    
     
     // ---------------- Web Methods only For 'producto' --------------------
     

@@ -5,9 +5,9 @@
         <group>
             <file>file:/C:/Users/Emiliano/Desktop/App%20Pedidos%20SMC/WSPedidosSMC/src/java/db/controllers/UsuarioController.java</file>
             <file>file:/C:/Users/Emiliano/Desktop/App%20Pedidos%20SMC/WSPedidosSMC/src/java/db/controllers/FacturaController.java</file>
-            <file>file:/C:/Users/Emiliano/Desktop/App%20Pedidos%20SMC/WSPedidosSMC/src/java/db/controllers/ClientesController.java</file>
+            <file>file:/C:/Users/Emiliano/Desktop/App%20Pedidos%20SMC/WSPedidosSMC/src/java/db/controllers/ClientesVendedorController.java</file>
             <file>file:/C:/Users/Emiliano/Desktop/App%20Pedidos%20SMC/WSPedidosSMC/src/java/WS/PedidosSMC.java</file>
-            <file>file:/C:/Users/Emiliano/Desktop/App%20Pedidos%20SMC/WSPedidosSMC/src/java/db/DBConnection.java</file>
+            <file>file:/C:/Users/Emiliano/Desktop/App%20Pedidos%20SMC/WSPedidosSMC/src/java/db/controllers/ClientesController.java</file>
             <file>file:/C:/Users/Emiliano/Desktop/App%20Pedidos%20SMC/WSPedidosSMC/src/java/db/controllers/ProductoController.java</file>
             <file>file:/C:/Users/Emiliano/Desktop/App%20Pedidos%20SMC/WSPedidosSMC/src/java/db/controllers/PedidoController.java</file>
         </group>

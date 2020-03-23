@@ -80,15 +80,18 @@ public class ClientesController {
             sqlStmnt.setString(1, CodCliente);
             rs = sqlStmnt.executeQuery();
             
-            rs.next();
-            cliente.setIdCliente(rs.getInt("IdCliente"));
-            cliente.setCodCliente(rs.getString("CodCliente"));
-            cliente.setNombres(rs.getString("Nombres"));
-            cliente.setApellidos(rs.getString("Apellidos"));
-            
-            
+            if (rs.next()) {
+                cliente.setIdCliente(rs.getInt("IdCliente"));
+                cliente.setCodCliente(rs.getString("CodCliente"));
+                cliente.setNombres(rs.getString("Nombres"));
+                cliente.setApellidos(rs.getString("Apellidos"));
+            } else {
+                cliente.setIdCliente(-1);
+            }
+                                  
         } catch (SQLException ex){
             LogSms.write_DBException("Error al consultar 'cliente' mediante Id");
+            cliente.setIdCliente(-2);
         }
         return cliente;
     }
@@ -207,7 +210,7 @@ public class ClientesController {
     /**
      * Método para eliminar cliente cuando se confirme la acción
      * @param IdCl      Id de cliente enviado para confirmar la accion
-     * @return 
+     * @return
      */
     public int deleteClienteById (int IdCl) {
         PreparedStatement sqlStmt;

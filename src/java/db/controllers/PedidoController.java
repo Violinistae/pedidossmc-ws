@@ -84,6 +84,7 @@ public class PedidoController {
         return SubtotalFact;
     }
     
+    //Verificar como calcular el subtotal al realizar el pedido !!!
     public int addPedidoToFactura (int Factura, int Producto, int Cantidad, 
             int Subtotal) {
         PreparedStatement sqlStmt;
@@ -103,17 +104,52 @@ public class PedidoController {
             return 0;
         }
         
+        
         //Actualizar total de factura en el método WS --> Llamar al metodo para 
-        //actualizar total
+        //actualizar total: Primero llamar a readSubtotal de factura y
+        //despues realizar actualizacion
     }
     
     //Vigiliar este método, ya que puede se un poco problemático
+    //DE DONDE OBTENDRÉ EL SUBTOTAL
     public int updatePedidoOfFactura (int IdPedido, int Producto, int Cantidad, 
-            int Subtotal /*int Factura ??? */) {
+            int Subtotal /*int Factura ??? Creo que no es necesario */) {
+        PreparedStatement sqlStmt;       
+        ResultSet rs;        
         
+        
+        try {
+            sqlStmt = this.con.prepareStatement("Select * from pedido where"
+                    + "IdPedido = ?");
+            sqlStmt.setInt(1, IdPedido);
+            rs = sqlStmt.executeQuery();
+            
+            if (rs.next()) {
+                sqlStmt = this.con.prepareStatement(""
+                        + "Update pedido Set"
+                        + "Producto = ?,"
+                        + "Cantidad = ?,"
+                        + "Subtotal = ? where IdPedido = ?");
+                
+                sqlStmt.setInt(1, Producto);
+                sqlStmt.setInt(2, Cantidad);
+                sqlStmt.setInt(3, Subtotal);
+                sqlStmt.setInt(4, IdPedido);
+                
+            if (sqlStmt.executeUpdate() > 0) 
+                return 1;
+            return -1;    
+                
+            } else         //No existe el pedido para actualizar
+                return -2;  //Imprimir algo parecido que en el catch           
+            
+        } catch (SQLException ex) {
+            LogSms.write_DBException("Error al actualizar 'pedido'");
+            return -2;  //Imprimir error al actualizar pedido            
+        }
     }
     
-    public int deletePedido_FromFactura (int IdPedido) {
+    public int deletePedidoOfFactura (int IdPedido) {
         PreparedStatement sqlStmt;
         
         try {
