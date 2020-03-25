@@ -45,15 +45,16 @@ public class PedidosSMC {
     }
     
     @WebMethod(operationName = "createUser")
-    public int createUser (@WebParam(name = "Username")String Username, 
+    public int createUser (@WebParam(name = "Username")String Username,
             @WebParam(name = "Password")String Password,
             @WebParam(name = "Nombres")String Nombres,
-            @WebParam(name = "Apellidos")String Apellidos,            
+            @WebParam(name = "Apellidos")String Apellidos,
+            @WebParam(name = "NSS")int NSS,
             @WebParam(name = "TipoUsuario")int TipoUsuario) {
         
         String Hash = "123";
         return userCtrlr.createUsuario(Username,
-                Password, Nombres, Apellidos, Hash, TipoUsuario);
+                Password, Nombres, Apellidos, NSS, Hash, TipoUsuario);
     }
     
     @WebMethod(operationName = "readAllUsers")
@@ -169,10 +170,14 @@ public class PedidosSMC {
                 //Asociar cliente con vendedor
                 return clientVendCtrlr.assocClientToVend(
                         vendedor.getIdUsuario(), cliente.getIdCliente());
+                //1 --> Cliente Asociado a Vendendor con éxito
+                //-1 --> Cliente ya tiene vendedor asignado
+                //-2 --> Error al consultar DB
+                
             } else  //No existe el cliente al que asociar a un vendedor
-                return -2;            
+                return -4;            
         } else //No existe vendedor con el que asociar un cliente
-            return -1;  
+            return -3;  
     }
     
     

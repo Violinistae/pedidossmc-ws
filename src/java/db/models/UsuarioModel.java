@@ -15,6 +15,7 @@ public class UsuarioModel {
     private String Password;
     private String Nombres;
     private String Apellidos;
+    private int NSS;
     private String Hash;
     private int TipoUsuario;
 
@@ -56,6 +57,14 @@ public class UsuarioModel {
 
     public void setApellidos(String Apellidos) {
         this.Apellidos = Apellidos;
+    }
+    
+    public int getNSS() {
+        return NSS;
+    }
+
+    public void setNSS(int NSS) {
+        this.NSS = NSS;
     }
 
     public String getHash() {

@@ -38,12 +38,12 @@ public class ClientesVendedorController {
             rs = sqlStmt.executeQuery();
             
             if (rs.next())
-                return -1;
+                return -1;//Ya tiene un Vendedor Asociado. Retornado hasta el WS
             return 1;
             
         } catch (SQLException e) {
             LogSms.write_DBException("Error al consultar si 'clientes' associado");
-            return -2;
+            return -2; //Error al consultar. Retornado hasta el WS
         }                
     }
     

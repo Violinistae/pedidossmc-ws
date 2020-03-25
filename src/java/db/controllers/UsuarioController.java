@@ -56,6 +56,14 @@ public class UsuarioController {
         }
         return IdU;
     }        
+    
+    private String generateHash(){
+        return "Hola";
+    }
+    
+    private String genertePassword(){
+        return "Password";
+    }
       
     // --------------------- Public Methods For WS ---------------------
     
@@ -80,10 +88,11 @@ public class UsuarioController {
                 usuario = new UsuarioModel();
                 usuario.setIdUsuario(rs.getInt("IdUsuario"));
                 usuario.setUsername(rs.getString("Username"));
-                usuario.setPassword(rs.getString("Password"));
+                //usuario.setPassword(rs.getString("Password"));
                 usuario.setNombres(rs.getString("Nombres"));
                 usuario.setApellidos(rs.getString("Apellidos"));
-                usuario.setHash(rs.getString("Hash"));
+                usuario.setNSS(rs.getInt("NSS"));
+                //usuario.setHash(rs.getString("Hash"));
                 usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
                 usuarios.add(usuario);
             }
@@ -116,10 +125,11 @@ public class UsuarioController {
             if (rs.next()) {
                 usuario.setIdUsuario(rs.getInt("IdUsuario"));
                 usuario.setUsername(rs.getString("Username"));
-                usuario.setPassword(rs.getString("Password")); // Retornar campo ?
+                //usuario.setPassword(rs.getString("Password")); // Retornar campo ?
                 usuario.setNombres(rs.getString("Nombres"));
                 usuario.setApellidos(rs.getString("Apellidos"));
-                usuario.setHash(rs.getString("Hash"));
+                usuario.setNSS(rs.getInt("NSS"));
+                //usuario.setHash(rs.getString("Hash"));
                 usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
             } else {
                 usuario.setIdUsuario(-1);
@@ -154,10 +164,11 @@ public class UsuarioController {
             if (rs.next()) {
                 usuario.setIdUsuario(rs.getInt("IdUsuario"));
                 usuario.setUsername(rs.getString("Username"));
-                usuario.setPassword(rs.getString("Password"));  // Retornar campo ?
+                //usuario.setPassword(rs.getString("Password"));  // Retornar campo ?
                 usuario.setNombres(rs.getString("Nombres"));
                 usuario.setApellidos(rs.getString("Apellidos"));
-                usuario.setHash(rs.getString("Hash"));
+                usuario.setNSS(rs.getInt("NSS"));
+                //usuario.setHash(rs.getString("Hash"));
                 usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
             } else {
                 usuario.setIdUsuario(-1);
@@ -192,10 +203,11 @@ public class UsuarioController {
                 usuario = new UsuarioModel();
                 usuario.setIdUsuario(rs.getInt("IdUsuario"));
                 usuario.setUsername(rs.getString("Username"));
-                usuario.setPassword(rs.getString("Password"));
+                //usuario.setPassword(rs.getString("Password"));
                 usuario.setNombres(rs.getString("Nombres"));
                 usuario.setApellidos(rs.getString("Apellidos"));
-                usuario.setHash(rs.getString("Hash"));
+                usuario.setNSS(rs.getInt("NSS"));
+                //usuario.setHash(rs.getString("Hash"));
                 usuario.setTipoUsuario(rs.getInt("TipoUsuario"));
                 usuarios.add(usuario);
             }
@@ -218,7 +230,7 @@ public class UsuarioController {
      * @return 
      */
     public int createUsuario (String Username, String Password, String Nombres, 
-            String Apellidos, String Hash, int TipoUsuario) {               
+            String Apellidos, int NSS, String Hash, int TipoUsuario) {               
         
         int IdU = this.checkExistUsername(Username);
         
@@ -228,7 +240,8 @@ public class UsuarioController {
         
         PreparedStatement sqlStmt;
         try {
-            //Hash= Generate hash
+            //Desarrollar métodos
+            //Hash = Generate hash
             //Password = Generate password
             
             sqlStmt = this.con.prepareStatement(
@@ -244,7 +257,7 @@ public class UsuarioController {
             sqlStmt.executeUpdate();
             
             return 1;           //Exito al crear un nuevo usuario
-                        
+            
         } catch (SQLException e) {     //No se pudo crear el nuevo usuario
             LogSms.write_DBException("Error al crear 'usuario'");
             return 0;

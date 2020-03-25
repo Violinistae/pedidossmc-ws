@@ -32,7 +32,10 @@ public class ProductoController {
     
     /**
      * 
-     * @return 
+     * Método para devolver todos los productos del catálogo.
+     * 
+     * @return  ArrayList de tipo ProductoModel con todos los productos
+     * del catálogo.
      */
     public ArrayList<ProductoModel> readAllProducto () {
         PreparedStatement sqlStmt;
@@ -65,8 +68,11 @@ public class ProductoController {
     
     /**
      * 
-     * @param CodProd
-     * @return 
+     * Método para buscar un producto específico. Puede no ser bastante 
+     * útil por la existencia del siguiente método
+     * 
+     * @param CodProd   //Código del producto
+     * @return  Objeto ProductoModel con información del producto buscado.
      */
     public ProductoModel readProductoByCodProd (String CodProd) {
         PreparedStatement sqlStmt;
@@ -92,8 +98,12 @@ public class ProductoController {
     
     /**
      * 
+     * Diferencia con método anterior, este puede desplegar una lista 
+     * para buscar un producto.
+     * 
      * @param CodProd
-     * @return 
+     * @return  ArratList de ProductoModel con los productos que coinciden
+     * con el codigo de producto ingresado.
      */
     public ArrayList<ProductoModel> readProductoLikeCodProd (String CodProd) {
         PreparedStatement sqlStmt;
@@ -124,6 +134,9 @@ public class ProductoController {
     }
     
     /**
+     * 
+     * Método para crear producto. Solo puede ser utilizado por un 
+     * administrador
      * 
      * @param CodProd
      * @param Descripcion
@@ -157,6 +170,9 @@ public class ProductoController {
     }
     
     /**
+     * 
+     * Método para actualizar producto. Solo puede ser utilizado por un 
+     * administrador
      * 
      * @param IdProd
      * @param CodProd
@@ -200,6 +216,9 @@ public class ProductoController {
     }
     
     /**
+     * 
+     * Método para eliminar producto. Solo puede ser utilizado por un 
+     * administrador
      * 
      * @param IdProd
      * @return 
